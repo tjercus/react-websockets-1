@@ -56,6 +56,13 @@ io.on("connection", (socket) => {
     console.log(event, args);
   });
 
+  setInterval(() => {
+    const newItem = { id: randomUUID(), value: randomUUID() };
+    // @ts-ignore
+    socket.emit("SRVR:ListContainer:CHANGE_EVT", [...arr, newItem]); // poor man's db update
+    arr.push(newItem);
+  }, 3 * 1000);
+
   /*
   const users = [];
   // Array.from(io.of("/").sockets).map(socket => {//etc.})
@@ -76,7 +83,7 @@ io.on("connection", (socket) => {
     const newItem = { id: randomUUID(), value: data };
     // NOTE that 'socket.broadcast.emit' will send to all other connected sockets (so not itself)
     // @ts-ignore
-    socket.emit("SRVR:ListContainer:CHANGE_EVT", [...arr, newItem]);
+    socket.emit("SRVR:ListContainer:CHANGE_EVT", [...arr, newItem]); // poor man's db update
     arr.push(newItem);
   });
 

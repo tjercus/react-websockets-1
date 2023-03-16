@@ -34,6 +34,9 @@ const ListContainer = ({ socket }: Props) => {
   }, []);
   return (
     <div id="list-container">
+      <h2>
+        {listItems.length} {"items"}
+      </h2>
       <ul>
         {listItems.map((item) => (
           <li key={item.id}>{item.value}</li>

@@ -89,7 +89,10 @@ button:focus-visible {
 }
 
 #connection-manager {
-  float: right
+  float: right;
+  border: 1px solid gray;
+  padding: 1em;
+  margin: 1em;
 }
 
 ul {
