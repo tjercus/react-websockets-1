@@ -44,21 +44,12 @@ const io = new Server<ServerType>(httpServer, {
     origin: "*", // the address of the HTTP server serving the App
   },
 });
-//
-// const periodicallyEmitRandomString = (socket: Socket<ServerType>) => {
-//   setTimeout(() => {
-//     socket.emit("SRVR:evt", uuidv4());
-//   }, 1000);
-// };
 
 io.on("connection", (socket) => {
   // @ts-ignore
   console.log("app was connected ...");
   // @ts-ignore
   //socket.on("APP:evt", (msg) => console.log("message from app:", msg));
-
-  // @ts-ignore
-  socket.emit("SRVR:evt", "server says hi");
 
   // use the catch-all log any event during development
   socket.onAny((event, ...args) => {
@@ -82,20 +73,15 @@ io.on("connection", (socket) => {
   // NOTE That sending with 'socket' (=== client) then only that client will get the update
   // @ts-ignore
   socket.on("APP:ListContainer:ADD_CMD", (data: string) => {
+    const newItem = { id: randomUUID(), value: data };
     // NOTE that 'socket.broadcast.emit' will send to all other connected sockets (so not itself)
     // @ts-ignore
-    socket.emit("SRVR:ListContainer:CHANGE_EVT", [
-      ...arr,
-      { id: randomUUID(), value: data },
-    ]);
+    socket.emit("SRVR:ListContainer:CHANGE_EVT", [...arr, newItem]);
+    arr.push(newItem);
   });
 
   // @ts-ignore
-  // socket.emit("SRVR:evt", users);
   socket.emit("SRVR:ListContainer:CHANGE_EVT", arr);
-
-  // housekeeping
-  //socket.on("disconnect", (reason) => console.log(reason));
 });
 
 console.log(`websocket server listening: ${PORT_NR} since ${new Date()}`);
