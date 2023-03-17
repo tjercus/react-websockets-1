@@ -42,15 +42,16 @@ button {
   border-radius: 8px;
   border: 1px solid silver;
   padding: 0.6em 1.2em;
+  margin: 0.25em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
-  -webkit-box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.75);
-  -moz-box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.75);
-  box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.75);
+  box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.75);
 }
 
 button:hover {
