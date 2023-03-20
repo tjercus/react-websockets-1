@@ -1,51 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
+import ListView from "./ListView";
+//
+import { IdentifyAndValuable } from "./types";
+
+// used to identify the container component between App and Server
+const CONTAINER_ID = "ListContainer";
 
 interface Props {
   socket: Socket;
 }
 
-interface Identifiable {
-  id: string;
-}
-
-interface Valuable<T> {
-  value: T;
-}
-
 const ListContainer = ({ socket }: Props) => {
   const [listItems, setListItems] = useState(
-    [] as Array<Identifiable & Valuable<string>>
+    [] as Array<IdentifyAndValuable<string>>
   );
 
   useEffect(() => {
     const onListContainerChange = (
-      items: Array<Identifiable & Valuable<string>>
+      items: Array<IdentifyAndValuable<string>>
     ) => {
       setListItems(items);
     };
 
-    socket.on("SRVR:ListContainer:CHANGE_EVT", onListContainerChange);
+    socket.on(`SRVR:${CONTAINER_ID}:CHANGE_EVT`, onListContainerChange);
 
     return () => {
-      socket.off("SRVR:ListContainer:CHANGE_EVT", onListContainerChange);
+      socket.off(`SRVR:${CONTAINER_ID}:CHANGE_EVT`, onListContainerChange);
     };
   }, []);
+
   return (
     <div id="list-container">
-      <h2>
-        {listItems.length} {"items"}
-      </h2>
-      <ul>
-        {listItems.map((item) => (
-          <li key={item.id}>{item.value}</li>
-        ))}
-      </ul>
+      <ListView listItems={listItems}></ListView>
       <button
-        onClick={() => socket.emit("APP:ListContainer:ADD_CMD", uuidv4())}
+        onClick={() => socket.emit(`APP:${CONTAINER_ID}:ADD_CMD`, uuidv4())}
       >
-        add an item
+        {"add an item via the backer"}
       </button>
     </div>
   );
