@@ -8,7 +8,7 @@ interface Props {
   socket: Socket;
 }
 
-export const ConnectionManager = ({ isConnected, socket }: Props) => {
+export const ConnectionManagerContainer = ({ isConnected, socket }: Props) => {
   function connect() {
     socket.connect();
   }

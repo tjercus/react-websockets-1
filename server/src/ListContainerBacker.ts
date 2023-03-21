@@ -1,8 +1,12 @@
 import { randomUUID } from "crypto";
 import { Socket } from "socket.io";
 
+const ONE_SECOND = 1000;
+
+let repeaterPointer: NodeJS.Timeout; // there is no sane default for Timer
+
 // in memory datastore for now
-const arr = [
+let arr = [
   { id: "one-id", value: "one" },
   { id: "two-id", value: "two" },
 ];
@@ -25,13 +29,23 @@ const ListContainerBacker = (socket: Socket) => {
     arr.push(newItem);
   });
 
-  // emit a server update to the client Container every x seconds
-  setInterval(() => {
-    const newItem = { id: randomUUID(), value: randomUUID() };
+  socket.on(`APP:${CONTAINER_ID}:CLEAR_CMD`, () => {
     // @ts-ignore
-    socket.emit(`SRVR:${CONTAINER_ID}:CHANGE_EVT`, [...arr, newItem]); // poor man's db update
-    arr.push(newItem);
-  }, 3 * 1000);
+    socket.emit(`SRVR:${CONTAINER_ID}:CHANGE_EVT`, []); // poor man's db update
+    arr = [];
+  });
+
+  socket.on(`APP:${CONTAINER_ID}:UPDATE_INTERVAL_CMD`, (nr: number) => {
+    // destroy previous timed repeater
+    clearInterval(repeaterPointer);
+    // emit a server update to the client Container every x seconds
+    repeaterPointer = setInterval(() => {
+      const newItem = { id: randomUUID(), value: randomUUID() };
+      // @ts-ignore
+      socket.emit(`SRVR:${CONTAINER_ID}:CHANGE_EVT`, [...arr, newItem]); // poor man's db update
+      arr.push(newItem);
+    }, nr * ONE_SECOND);
+  });
 
   // @ts-ignore
   socket.emit(`SRVR:${CONTAINER_ID}:CHANGE_EVT`, arr);

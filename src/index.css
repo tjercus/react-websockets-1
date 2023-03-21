@@ -86,7 +86,10 @@ button:focus-visible {
 }
 
 .card {
-  padding: 2em;
+  background-color: antiquewhite;
+  border: 1px solid silver;
+  padding: 1em;
+  margin: 1em;
 }
 
 #connection-manager {
@@ -104,4 +107,8 @@ ul li {
   background-color: lightgreen;
   margin-bottom: 0.25em;
   max-width: 25em;
+}
+
+.numeric-input {
+  width: 5em;
 }

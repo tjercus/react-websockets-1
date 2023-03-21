@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
+import ButtonContainer from "./ButtonContainer";
 //
-import { ConnectionManager } from "./ConnectionManager";
+import { ConnectionManagerContainer } from "./ConnectionManagerContainer";
 import ListContainer from "./ListContainer";
 
 export function ConnectionState({ isConnected }: { isConnected: boolean }) {
@@ -42,11 +43,14 @@ function App() {
 
   return (
     <div className="App">
-      <ConnectionManager isConnected={isConnected} socket={socket} />
+      <ConnectionManagerContainer isConnected={isConnected} socket={socket} />
       <h1>{"Connected Components using Websockets"}</h1>
       <i>{"Turn off AdBlockers and Cookie blockers if connection fails."}</i>
 
-      <div className="card">
+      <div>
+        <h2>{"ButtonContainer"}</h2>
+        <ButtonContainer socket={socket} />
+        <h2>{"ListContainer"}</h2>
         <ListContainer socket={socket} />
       </div>
     </div>
