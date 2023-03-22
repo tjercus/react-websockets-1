@@ -1,5 +1,6 @@
-import { randomUUID } from "crypto";
 import { Socket } from "socket.io";
+
+const ONE_SECOND = 1000;
 
 // in memory datastore for now
 let buttonState = false;
@@ -22,11 +23,11 @@ const ButtonContainerBacker = (socket: Socket) => {
 
   // emit a server update to the client Container every x seconds
   setInterval(() => {
-    const newState = Math.random() < 0.5;
+    const newState = Math.random() < 0.5; // random boolean
     // @ts-ignore
-    socket.emit(`SRVR:${CONTAINER_ID}:CHANGE_EVT`, newState); // random boolean
+    socket.emit(`SRVR:${CONTAINER_ID}:CHANGE_EVT`, newState);
     buttonState = newState;
-  }, 4 * 1000);
+  }, 3 * ONE_SECOND);
 
   // @ts-ignore
   socket.emit(`SRVR:${CONTAINER_ID}:CHANGE_EVT`, buttonState);

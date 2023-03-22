@@ -37,7 +37,7 @@ const ListContainer = ({ socket }: Props) => {
     <div id="list-container" className="card">
       <section>
         <label htmlFor={"serverPushIntervalSeconds"}>
-          {"Server push repeat interval in seconds "}
+          {"Server push repeat interval in seconds (type to start/change) "}
         </label>
         <input
           className={"numeric-input"}

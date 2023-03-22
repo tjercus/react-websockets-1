@@ -1,6 +1,7 @@
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
 import { randomUUID } from "crypto";
+import ButtonContainerBacker from "./ButtonContainerBacker";
 import ListContainerBacker from "./ListContainerBacker";
 
 type ID = string;
@@ -54,6 +55,7 @@ io.on("connection", (socket) => {
 
   /* --------- register server container components ('backers') here ----------  */
 
+  ButtonContainerBacker(socket);
   ListContainerBacker(socket);
 });
 

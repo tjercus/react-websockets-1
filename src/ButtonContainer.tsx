@@ -16,9 +16,7 @@ const ButtonContainer = ({ socket }: Props) => {
 
   useEffect(() => {
     const onListContainerChange = (newButtonState: boolean) => {
-      if (buttonState !== newButtonState) {
-        setButtonState(newButtonState);
-      }
+      setButtonState(newButtonState);
     };
 
     socket.on(`SRVR:${CONTAINER_ID}:CHANGE_EVT`, onListContainerChange);
@@ -30,7 +28,11 @@ const ButtonContainer = ({ socket }: Props) => {
 
   return (
     <div id="button-container" className="card">
-      <p>{"a connected button:"}</p>
+      <p>
+        {
+          "This connected button will be randomly updated from the Server Container Component:"
+        }
+      </p>
       <button
         onClick={() => {
           const newState = !buttonState;
@@ -38,7 +40,7 @@ const ButtonContainer = ({ socket }: Props) => {
           return socket.emit(`APP:${CONTAINER_ID}:SET_CMD`, newState);
         }}
       >
-        {buttonState ? "true" : "false"}
+        {"" + buttonState}
       </button>
     </div>
   );
