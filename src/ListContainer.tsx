@@ -3,7 +3,7 @@ import { Socket } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 import ListView from "./ListView";
 //
-import { IdentifyAndValuable } from "./types";
+import { IdentifiableAndValuable } from "./types";
 
 // used to identify the container component between App and Server
 const CONTAINER_ID = "ListContainer";
@@ -16,12 +16,12 @@ const ListContainer = ({ socket }: Props) => {
   const [serverPushIntervalSeconds, setServerPushIntervalSeconds] = useState(5);
 
   const [listItems, setListItems] = useState(
-    [] as Array<IdentifyAndValuable<string>>
+    [] as Array<IdentifiableAndValuable<string>>
   );
 
   useEffect(() => {
     const onListContainerChange = (
-      items: Array<IdentifyAndValuable<string>>
+      items: Array<IdentifiableAndValuable<string>>
     ) => {
       setListItems(items);
     };

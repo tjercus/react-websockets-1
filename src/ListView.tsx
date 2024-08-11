@@ -1,10 +1,10 @@
 // @ts-ignore
 import React from "react";
 //
-import { IdentifyAndValuable } from "./types";
+import { IdentifiableAndValuable } from "./types";
 
 interface Props {
-  listItems: Array<IdentifyAndValuable<string>>;
+  listItems: Array<IdentifiableAndValuable<string>>;
 }
 
 const ListView = ({ listItems = [] }: Props) => {
