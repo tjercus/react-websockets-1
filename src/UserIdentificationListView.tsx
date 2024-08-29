@@ -14,13 +14,14 @@ const UserIdentificationListView = ({
   eventHandlers,
   listItems = [],
 }: Props) => {
+  console.log("UserIdentificationListView", listItems);
   return (
     <div>
       <h2>
-        {listItems.length} {"items"}
+        {listItems?.length} {"items"}
       </h2>
       <ul>
-        {listItems.map((item) => (
+        {listItems?.map((item) => (
           <li key={item.id}>
             {item.value}
             <button id={item.id} onClick={eventHandlers.handleItemClick}>

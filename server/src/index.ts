@@ -34,12 +34,14 @@ type ServerType =
   | InterServerEvents
   | SocketData;
 
-// in memory datastore for now
-let users = [
-  { id: "use-one-id", value: "user one" },
-  { id: "user-two-id", value: "user two" },
-  { id: "user-three-id", value: "user three" },
-];
+// in-memory datastore as a Map
+let users = new Map(
+  [
+    { id: "user-one-id", identified: false, value: "user one" },
+    { id: "user-two-id", identified: false, value: "user two" },
+    { id: "user-three-id", identified: false, value: "user three" },
+  ].map((user) => [user.id, user])
+);
 
 /* -------------------- runtime --------------------*/
 
@@ -56,15 +58,26 @@ app.get("/hello", (req: Request, res: Response) => {
   res.json({ message: "welcome human!" });
 });
 app.get("/users", (req: Request, res: Response) => {
-  res.json(users);
+  const unidentifiedUsers = Array.from(users.values()).filter(
+    (user) => !user.identified
+  );
+  console.log("unidentified users", unidentifiedUsers);
+  res.json(unidentifiedUsers);
 });
 
 app.post("/login", (req: Request, res: Response) => {
-  console.log(req.body); // TODO why is this empty?
   const userId = req.body?.userId;
-  if (users.find((user) => user.id === userId) === undefined) {
+  const userFromDb = users.get(userId);
+  if (userFromDb === undefined) {
     res.status(401).json({ message: "User not found" });
   } else {
+    // mark user as identified in local db
+    const updatedUser = {
+      id: userFromDb.id,
+      identified: true,
+      value: userFromDb.value,
+    };
+    users.set(userId, updatedUser);
     // for now just use the userId as token
     res.json({ token: userId });
   }
@@ -99,8 +112,8 @@ io.on("connection", (socket) => {
 
   /* --------- register server container components ('backers') here ----------  */
 
-  ButtonContainerBacker(socket);
-  ListContainerBacker(socket);
+  ButtonContainerBacker(io, socket);
+  ListContainerBacker(io, socket);
 });
 
 console.log(

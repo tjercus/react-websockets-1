@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
-import ListView from "./ListView";
 //
+import ListView from "./ListView";
 import { IdentifiableAndValuable } from "./types";
 
 // used to identify the container component between App and Server
@@ -23,6 +23,7 @@ const ListContainer = ({ socket }: Props) => {
     const onListContainerChange = (
       items: Array<IdentifiableAndValuable<string>>
     ) => {
+      console.log("server updated list items", items);
       setListItems(items);
     };
 
@@ -31,7 +32,7 @@ const ListContainer = ({ socket }: Props) => {
     return () => {
       socket.off(`SRVR:${CONTAINER_ID}:CHANGE_EVT`, onListContainerChange);
     };
-  }, []);
+  }, []); // run only once
 
   return (
     <div id="list-container" className="card">
