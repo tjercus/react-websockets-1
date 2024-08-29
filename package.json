@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "format": "prettier --write .",
-    "build": "tsc && vite build; cd server && npm run build",
+    "build": "tsc && vite build; cd server && npm run build; cd ../",
     "preview": "vite preview",
-    "server": "node server/dist/index.js",
+    "server": "npm run build; node server/dist/index.js",
     "start": "vite"
   },
   "dependencies": {

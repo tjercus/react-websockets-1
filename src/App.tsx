@@ -5,6 +5,7 @@ import ButtonContainer from "./ButtonContainer";
 //
 import { ConnectionManagerContainer } from "./ConnectionManagerContainer";
 import ListContainer from "./ListContainer";
+import { getToken } from "./utils";
 
 export function ConnectionState({ isConnected }: { isConnected: boolean }) {
   return <p>{`Connected? ${isConnected}`}</p>;
@@ -14,10 +15,12 @@ export function ConnectionState({ isConnected }: { isConnected: boolean }) {
 const URL = "ws://localhost:8080";
 
 const socket = io(URL as string, { autoConnect: false });
-socket.auth = { username: uuidv4() };
+socket.auth = {
+  token: getToken(),
+};
 socket.connect();
 
-function App() {
+const App = () => {
   const [isConnected, setIsConnected] = useState(socket.connected);
 
   useEffect(() => {
@@ -55,6 +58,6 @@ function App() {
       </div>
     </div>
   );
-}
+};
 
 export default App;

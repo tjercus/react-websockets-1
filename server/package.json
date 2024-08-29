@@ -7,11 +7,16 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "2.8.5",
+    "express": "4.19.2",
     "socket.io": "4.6.1",
     "socket.io-client": "4.6.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/socket.io": "^3.0.2",
     "prettier": "2.8.4",
     "typescript": "beta"
   }
