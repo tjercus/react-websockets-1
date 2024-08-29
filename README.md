@@ -4,6 +4,16 @@ Components have a 'backing bean' on the server,
 both are connected via websockets.
 They can keep each other up to date on changes.
 
+# 29 Aug 2024
+
+User first needs to identify himself over HTTP, then he can use the websockets server.
+A token is used to identify the user. For demo purposes the token is just the user ID.
+In a real world the user would be:
+
+- required to provide credentials in a login form
+- the server would return a signed JWT token
+- the server would verify the token on each request
+
 # Run with
 
 npm run server
