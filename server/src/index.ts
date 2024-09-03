@@ -1,41 +1,17 @@
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
+import * as console from "node:console";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
-
+//
 import ButtonContainerBacker from "./ButtonContainerBacker";
 import ListContainerBacker from "./ListContainerBacker";
-
-type ID = string;
-
-interface ServerToClientEvents {
-  noArg: () => void;
-  basicEmit: (a: number, b: string, c: Buffer) => void;
-  withAck: (d: string, callback: (e: number) => void) => void;
-}
-
-interface ClientToServerEvents {
-  hello: () => void;
-}
-
-interface InterServerEvents {
-  ping: () => void;
-}
-
-interface SocketData {
-  name: string;
-  age: number;
-}
-
-type ServerType =
-  | ClientToServerEvents
-  | ServerToClientEvents
-  | InterServerEvents
-  | SocketData;
+import { ID, ServerType, User } from "./types";
+import { byNotIdentified } from "./utils";
 
 // in-memory datastore as a Map
-let users = new Map(
+let users = new Map<ID, User>(
   [
     { id: "user-one-id", identified: false, value: "user one" },
     { id: "user-two-id", identified: false, value: "user two" },
@@ -57,31 +33,64 @@ app.get("/hello", (req: Request, res: Response) => {
   console.log("/hello was hit");
   res.json({ message: "welcome human!" });
 });
-app.get("/users", (req: Request, res: Response) => {
-  const unidentifiedUsers = Array.from(users.values()).filter(
-    (user) => !user.identified
-  );
-  console.log("unidentified users", unidentifiedUsers);
-  res.json(unidentifiedUsers);
-});
 
-app.post("/login", (req: Request, res: Response) => {
-  const userId = req.body?.userId;
-  const userFromDb = users.get(userId);
-  if (userFromDb === undefined) {
-    res.status(401).json({ message: "User not found" });
-  } else {
-    // mark user as identified in local db
-    const updatedUser = {
-      id: userFromDb.id,
-      identified: true,
-      value: userFromDb.value,
-    };
-    users.set(userId, updatedUser);
-    // for now just use the userId as token
-    res.json({ token: userId });
+app.get("/query/:subject", (req: Request, res: Response) => {
+  const subject = req.params.subject ?? "unknown";
+  switch (subject) {
+    case "users":
+      res.json(Array.from(users.values()).filter(byNotIdentified));
+      break;
+    default:
+      res.status(404).json({ message: "subject not found" });
+      break;
   }
 });
+
+app.post("/command", (req: Request, res: Response) => {
+  const cmdType = req.body?.type;
+  const userId = req.body?.payload;
+  const userFromDb = users.get(userId);
+
+  console.log("command received", cmdType, userId, userFromDb);
+
+  switch (cmdType) {
+    case "IDENTIFY_CMD":
+      if (userFromDb === undefined) {
+        res.status(401).json({ message: "User not found" });
+      } else {
+        // mark user as identified in local db
+        const updatedUser: User = {
+          id: userFromDb.id,
+          identified: true,
+          value: userFromDb.value,
+        };
+        users.set(userId, updatedUser);
+        // for now just use the userId as token
+        res.json({ token: userId });
+      }
+      break;
+    case "DE-IDENTIFY_CMD":
+      if (userFromDb === undefined) {
+        res.status(401).json({ message: "User not found" });
+      } else {
+        // mark user as de-identified in local db
+        const updatedUser = {
+          id: userFromDb.id,
+          identified: false,
+          value: userFromDb.value,
+        };
+        users.set(userId, updatedUser);
+        // let the user know that he is de-identified
+        res.status(200);
+      }
+      break;
+    default:
+      res.status(404).json({ message: "command not found" });
+      break;
+  }
+});
+
+/* -------------------- websocket --------------------*/
 
 const io = new Server<ServerType>(httpServer, {
   cors: {
@@ -93,7 +102,7 @@ const io = new Server<ServerType>(httpServer, {
 // Middleware to check JWT in Socket.IO connections
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
-  console.log("token from websocket handshake", token);
+  console.log(`token from websocket handshake [${token}]`);
   // Verify token here
   if (token) {
     return next();

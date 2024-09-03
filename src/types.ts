@@ -7,3 +7,7 @@ export interface Valuable<T> {
 }
 
 export type IdentifiableAndValuable<T> = Identifiable & Valuable<T>;
+
+export type Token = { token: string };
+
+export type ServerCommand = { type: string; payload: unknown };

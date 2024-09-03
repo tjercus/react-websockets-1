@@ -107,6 +107,7 @@ ul li {
   background-color: lightgreen;
   margin-bottom: 0.25em;
   max-width: 25em;
+  padding: 0.25em;
 }
 
 .numeric-input {

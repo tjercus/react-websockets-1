@@ -1,4 +1,5 @@
 import { randomUUID } from "crypto";
+import * as console from "node:console";
 import { Server, Socket } from "socket.io";
 
 const ONE_SECOND = 1000;
@@ -37,6 +38,9 @@ const ListContainerBacker = (io: Server, socket: Socket) => {
   });
 
   socket.on(`APP:${CONTAINER_ID}:UPDATE_INTERVAL_CMD`, (nr: number) => {
+    console.log("updating global list push interval to", nr);
+    // notify all clients of the new interval
+    io.emit(`SRVR:${CONTAINER_ID}:UPDATED_INTERVAL_EVT`, nr); // poor man's db update
     // destroy previous timed repeater
     clearInterval(repeaterPointer);
     // emit a server update to the client Container every x seconds

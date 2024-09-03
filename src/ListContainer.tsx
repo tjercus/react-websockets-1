@@ -8,12 +8,16 @@ import { IdentifiableAndValuable } from "./types";
 // used to identify the container component between App and Server
 const CONTAINER_ID = "ListContainer";
 
+const DEFAULT_INTERVAL_SECONDS = 15;
+
 interface Props {
   socket: Socket;
 }
 
 const ListContainer = ({ socket }: Props) => {
-  const [serverPushIntervalSeconds, setServerPushIntervalSeconds] = useState(5);
+  const [serverPushIntervalSeconds, setServerPushIntervalSeconds] = useState(
+    DEFAULT_INTERVAL_SECONDS
+  );
 
   const [listItems, setListItems] = useState(
     [] as Array<IdentifiableAndValuable<string>>
@@ -28,6 +32,11 @@ const ListContainer = ({ socket }: Props) => {
     };
 
     socket.on(`SRVR:${CONTAINER_ID}:CHANGE_EVT`, onListContainerChange);
+
+    socket.on(
+      `SRVR:${CONTAINER_ID}:UPDATED_INTERVAL_EVT`,
+      setServerPushIntervalSeconds
+    );
 
     return () => {
       socket.off(`SRVR:${CONTAINER_ID}:CHANGE_EVT`, onListContainerChange);

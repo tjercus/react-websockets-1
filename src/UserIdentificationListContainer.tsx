@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 //
+import { fetchUsers, identifyWithResponse } from "./httpApi";
 import { IdentifiableAndValuable } from "./types";
 import UserIdentificationListView from "./UserIdentificationListView";
 import { storeToken } from "./utils";
 
-const HTTP_URL = "http://localhost:8080";
+const POLLING_INTERVAL_MS = 5 * 1000;
 
 /**
  * Allows the user to identify themselves.
- * In a production environment you would display a login form.
+ * In a production environment you would display a identify form.
  */
 const UserIdentificationListContainer = () => {
   const [listItems, setListItems] = useState(
@@ -16,11 +17,11 @@ const UserIdentificationListContainer = () => {
   );
 
   useEffect(() => {
-    fetch(`${HTTP_URL}/users`).then((response) => {
-      response.json().then((data) => {
-        setListItems(data);
-      });
-    });
+    fetchUsers().then(setListItems);
+    // do a simple polling to keep the list up to date across all clients
+    setInterval(() => {
+      fetchUsers().then(setListItems);
+    }, POLLING_INTERVAL_MS);
   }, []);
 
   return (
@@ -30,20 +31,14 @@ const UserIdentificationListContainer = () => {
         eventHandlers={{
           handleItemClick: (event) => {
             const target = event.target as HTMLButtonElement;
-            const userId = target.getAttribute("id");
-            fetch(`${HTTP_URL}/login`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ userId }),
-            }).then((response) => {
-              response.json().then((data) => {
-                // get back a JWT, set it in session storage
-                data.token ? storeToken(data.token) : console.error(data);
-                // refresh the app after identification
-                window.location.href = "/";
-              });
+            const userId = target.getAttribute("id") ?? "";
+            identifyWithResponse(userId).then((tokenObj) => {
+              // get back a JWT, set it in session storage
+              tokenObj.token
+                ? storeToken(tokenObj.token)
+                : console.error(tokenObj);
+              // refresh the app after identification
+              window.location.href = "/";
             });
           },
         }}

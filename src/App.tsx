@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import { v4 as uuidv4 } from "uuid";
-import ButtonContainer from "./ButtonContainer";
 //
+import ButtonContainer from "./ButtonContainer";
 import { ConnectionManagerContainer } from "./ConnectionManagerContainer";
+import { deIdentify, identify } from "./httpApi";
 import ListContainer from "./ListContainer";
-import { getToken } from "./utils";
+import { getLocallyStoredToken } from "./utils";
 
 export function ConnectionState({ isConnected }: { isConnected: boolean }) {
   return <p>{`Connected? ${isConnected}`}</p>;
@@ -16,7 +16,7 @@ const URL = "ws://localhost:8080";
 
 const socket = io(URL as string, { autoConnect: false });
 socket.auth = {
-  token: getToken(),
+  token: getLocallyStoredToken(),
 };
 socket.connect();
 
@@ -26,15 +26,21 @@ const App = () => {
   useEffect(() => {
     const onConnect = () => {
       setIsConnected(true);
+      // notify server via http that the client is connected
+      // so it can set the state of the client to connected
+      identify(getLocallyStoredToken());
     };
 
     const onDisconnect = () => {
       setIsConnected(false);
+      // notify the server that the client is disconnected
+      deIdentify(getLocallyStoredToken());
     };
 
     // listeners
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
+
     // logging server events for debug and test
     socket.onAny((msg, ...args) => console.log(msg, ...args));
 

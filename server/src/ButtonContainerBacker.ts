@@ -1,6 +1,8 @@
 import { Server, Socket } from "socket.io";
 
+const TEN = 10;
 const ONE_SECOND = 1000;
+const EMIT_INTERVAL_MS = TEN * ONE_SECOND;
 
 // in memory datastore for now
 let buttonState = false;
@@ -10,6 +12,7 @@ const CONTAINER_ID = "ButtonContainer";
 /**
  * Backs a React Client Container on the Server. It handles both listening for and sending events
  * @param {Server} io - socket.io server instance (used for broadcasting to all clients)
+ * @param {Socket} socket - specific connection to the client
  * Events are named in three parts <APP|SRVR>:<containerId>:<event-name>
  */
 const ButtonContainerBacker = (io: Server, socket: Socket) => {
@@ -27,7 +30,7 @@ const ButtonContainerBacker = (io: Server, socket: Socket) => {
     // @ts-ignore
     io.emit(`SRVR:${CONTAINER_ID}:CHANGE_EVT`, newState);
     buttonState = newState;
-  }, 10 * ONE_SECOND);
+  }, EMIT_INTERVAL_MS);
 
   // @ts-ignore
   io.emit(`SRVR:${CONTAINER_ID}:CHANGE_EVT`, buttonState);
