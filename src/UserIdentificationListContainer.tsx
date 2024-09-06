@@ -26,7 +26,12 @@ const UserIdentificationListContainer = () => {
 
   return (
     <div id="user-identification-list-container" className="card">
-      <h2>{"Identify yourself"}</h2>
+      <p>
+        {
+          "In a perfect, utopian world, nobody needs to authenticate themselves."
+        }
+      </p>
+      <h2>{"Please identify yourself"}</h2>
       <UserIdentificationListView
         eventHandlers={{
           handleItemClick: (event) => {

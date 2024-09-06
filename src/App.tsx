@@ -33,8 +33,8 @@ const App = () => {
 
     const onDisconnect = () => {
       setIsConnected(false);
-      // notify the server that the client is disconnected
-      deIdentify(getLocallyStoredToken());
+      // notice that we do not de-identify so that the client can re-connect
+      // without having to re-identify
     };
 
     // listeners

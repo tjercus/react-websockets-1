@@ -108,6 +108,13 @@ ul li {
   margin-bottom: 0.25em;
   max-width: 25em;
   padding: 0.25em;
+  height: 3em;
+  vertical-align: center;
+}
+
+ul li button {
+  position: relative;
+  float: right;
 }
 
 .numeric-input {
